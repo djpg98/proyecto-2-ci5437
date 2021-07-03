@@ -163,6 +163,14 @@ class state_t {
         }
         return valid_moves.empty() ? -1 : valid_moves[lrand48() % valid_moves.size()];
     }
+    /* Obtenemos lista de movimientos válidos en el estado para un color dado */
+    void get_valid_moves(std::vector<int> &valid_moves, int color) {
+        for( int pos = 0; pos < DIM; ++pos ) {
+            if( (color && is_black_move(pos)) || (!color && is_white_move(pos)) ) {
+                valid_moves.push_back(pos);
+            }
+        }
+    }
 
     //Operaciones de comparación y asignación
     bool operator<(const state_t &s) const {
