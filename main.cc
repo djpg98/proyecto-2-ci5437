@@ -12,14 +12,15 @@
 #include <limits>
 #include "othello_cut.h" // won't work correctly until .h is fixed!
 #include "utils.h"
-
 #include <unordered_map>
+#include <algorithm>
+#define INFINITY 100000
 
 using namespace std;
-
 unsigned expanded = 0;
 unsigned generated = 0;
 int tt_threshold = 32; // threshold to save entries in TT
+
 
 // Transposition table (it is not necessary to implement TT)
 struct stored_info_t {
@@ -100,6 +101,69 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
 }
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false);
 
+
+int negamax(state_t state, int depth, int color, bool use_tt = false){
+
+    if (depth == 0 || state.terminal()) {
+        return color * state.value();
+    }
+
+    int alpha = -INFINITY;
+    vector<int> valid_moves;
+    state.get_valid_moves(valid_moves, color);
+
+    state_t child;
+    while (!valid_moves.empty()) {
+
+        if (color) {
+            child = state.black_move(valid_moves.back());
+        }
+        else {
+            child = state.white_move(valid_moves.back());
+        }
+        valid_moves.pop_back();
+        
+        alpha = max(alpha, -negamax(child, depth - 1, -color));
+
+    }
+
+    return alpha;
+}
+
+
+int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false) {
+    
+    if (depth == 0 || state.terminal()) {
+        return color * state.value();
+    }
+
+    int score = -INFINITY;
+    vector<int> valid_moves;
+    state.get_valid_moves(valid_moves, color);
+
+    state_t child;
+    int val;
+    while (!valid_moves.empty()) {
+
+        if (color) {
+            child = state.black_move(valid_moves.back());
+        }
+        else {
+            child = state.white_move(valid_moves.back());
+        }
+        valid_moves.pop_back();
+
+        val = negamax(child, depth - 1, -beta, -alpha, -color);
+        score = max(score, val);
+        alpha = max(alpha, val);
+
+        if (alpha >= beta) break;
+    }
+
+    return score;
+}
+
+
 int main(int argc, const char **argv) {
     state_t pv[128];
     int npv = 0;
@@ -153,9 +217,9 @@ int main(int argc, const char **argv) {
 
         try {
             if( algorithm == 1 ) {
-                //value = negamax(pv[i], 0, color, use_tt);
+                value = negamax(pv[i], 0, color, use_tt);
             } else if( algorithm == 2 ) {
-                //value = negamax(pv[i], 0, -200, 200, color, use_tt);
+                value = negamax(pv[i], 0, -200, 200, color, use_tt);
             } else if( algorithm == 3 ) {
                 value = scout(pv[i], 0, color, use_tt);
             } else if( algorithm == 4 ) {
