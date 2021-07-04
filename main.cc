@@ -20,6 +20,7 @@ using namespace std;
 unsigned expanded = 0;
 unsigned generated = 0;
 int tt_threshold = 32; // threshold to save entries in TT
+bool first = true;
 
 
 // Transposition table (it is not necessary to implement TT)
@@ -134,6 +135,8 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
 }
 
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false);
+int negamax(state_t state, int depth, int color, bool use_tt = false);
+int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false);
 
 
 int negamax(state_t state, int depth, int color, bool use_tt){
@@ -141,11 +144,16 @@ int negamax(state_t state, int depth, int color, bool use_tt){
     if (depth == 0 || state.terminal()) {
         return color * state.value();
     }
+    if (first) {
+        generated = 1;
+        first = false;
+    }
 
     expanded += 1;
     int alpha = -INFINITY;
     vector<int> valid_moves;
     state.get_valid_moves(valid_moves, color);
+    generated += valid_moves.size();
 
     state_t child;
     while (!valid_moves.empty()) {
@@ -171,11 +179,16 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
     if (depth == 0 || state.terminal()) {
         return color * state.value();
     }
+    if (first) {
+        generated = 1;
+        first = false;
+    }
 
     expanded += 1;
     int score = -INFINITY;
     vector<int> valid_moves;
     state.get_valid_moves(valid_moves, color);
+    generated += valid_moves.size();
 
     state_t child;
     int val;
@@ -249,13 +262,14 @@ int main(int argc, const char **argv) {
         float start_time = Utils::read_time_in_seconds();
         expanded = 0;
         generated = 0;
+        first = true;
         int color = i % 2 == 1 ? 1 : -1;
 
         try {
             if( algorithm == 1 ) {
-                value = negamax(pv[i], 10000, color, use_tt);
+                value = negamax(pv[i], 50, color, use_tt);
             } else if( algorithm == 2 ) {
-                value = negamax(pv[i], 10000, -INFINITY, INFINITY, color, use_tt);
+                value = negamax(pv[i], 50, -INFINITY, INFINITY, color, use_tt);
             } else if( algorithm == 3 ) {
                 value = scout(pv[i], 0, color, use_tt);
                 cout << value << "\n";
