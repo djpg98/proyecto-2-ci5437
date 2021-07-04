@@ -166,7 +166,7 @@ class state_t {
     /* Obtenemos lista de movimientos válidos en el estado para un color dado */
     void get_valid_moves(std::vector<int> &valid_moves, int color) {
         for( int pos = 0; pos < DIM; ++pos ) {
-            if( (color && is_black_move(pos)) || (!color && is_white_move(pos)) ) {
+            if( (color==1 && is_black_move(pos)) || (color==-1 && is_white_move(pos)) ) {
                 valid_moves.push_back(pos);
             }
         }
