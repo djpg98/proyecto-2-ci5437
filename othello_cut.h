@@ -256,24 +256,32 @@ inline bool state_t::outflank(bool color, int pos) const {
 
     //Check Diagonal 1
     x = dia1[pos - 4];
-    while( *x != pos) ++x;
-    if( *(x+1) != -1) {
+    while( *x != pos ) ++x;
+    if( *(x+1) != -1 ) {
         for( p = x + 1; (*p != -1) && !is_free(*p) && (color ^ is_black(*p)); ++p );
         if( (p > x + 1) && (*p != - 1) && !is_free(*p) ) return true;
     }
+<<<<<<< HEAD
     if( x != dia1[pos - 4]) {
+=======
+    if( x != dia1[pos - 4] ) {
+>>>>>>> 47f3f72c231af8de69c4d0dc560710a5f8a00026
         for( p = x - 1; (p >= dia1[pos - 4]) && !is_free(*p) && (color ^ is_black(*p)); --p );
         if( (p < x - 1) && (p >= dia1[pos - 4]) && !is_free(*p) ) return true; 
     }
 
     //Check Diagonal 2
     x = dia2[pos - 4];
-    while( *x != pos) ++x;
-    if( *(x+1) != -1) {
+    while( *x != pos ) ++x;
+    if( *(x+1) != -1 ) {
         for( p = x + 1; (*p != -1) && !is_free(*p) && (color ^ is_black(*p)); ++p );
         if( (p > x + 1) && (*p != - 1) && !is_free(*p) ) return true;
     }
+<<<<<<< HEAD
     if( x != dia2[pos - 4]) {
+=======
+    if( x != dia2[pos - 4] ) {
+>>>>>>> 47f3f72c231af8de69c4d0dc560710a5f8a00026
         for( p = x - 1; (p >= dia2[pos - 4]) && !is_free(*p) && (color ^ is_black(*p)); --p );
         if( (p < x - 1) && (p >= dia2[pos - 4]) && !is_free(*p) ) return true; 
     }
@@ -341,6 +349,7 @@ inline state_t state_t::move(bool color, int pos) const {
         }
     }
 
+    // Process diagonal 1
     x = dia1[pos - 4];
     while( *x != pos ) ++x;
     if( *(x+1) != -1 ) {
@@ -356,6 +365,7 @@ inline state_t state_t::move(bool color, int pos) const {
         }
     }
 
+    // Process diagonal 2
     x = dia2[pos - 4];
     while( *x != pos ) ++x;
     if( *(x+1) != -1 ) {
