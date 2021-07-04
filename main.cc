@@ -262,7 +262,7 @@ int main(int argc, const char **argv) {
 
     // Run algorithm along PV (bacwards)
     cout << "Moving along PV:" << endl;
-    for( int i = 3; i <= 3; ++i ) {
+    for( int i = 0; i <= npv; ++i ) {
         //cout << pv[i];
         alarm(0);
         int value = 0;
@@ -276,9 +276,9 @@ int main(int argc, const char **argv) {
 
         try {
             if( algorithm == 1 ) {
-                value = negamax(pv[i], 50, color, use_tt);
+                value = negamax(pv[i], 70, color, use_tt);
             } else if( algorithm == 2 ) {
-                value = negamax(pv[i], 50, -INFINITY, INFINITY, color, use_tt);
+                value = negamax(pv[i], 70, -INFINITY, INFINITY, color, use_tt);
             } else if( algorithm == 3 ) {
                 alarm(900);
                 value = scout(pv[i], 70, color, use_tt);
