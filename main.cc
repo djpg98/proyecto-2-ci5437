@@ -5,8 +5,8 @@
 // Modified by: Diego Peña, 15-11095
 
 #define NEGAINFINITY -40
-#define GE 1
-#define GEQ -1 
+#define LE 1
+#define LEQ -1 
 
 #include <iostream>
 #include <limits>
@@ -14,12 +14,19 @@
 #include "utils.h"
 #include <unordered_map>
 #include <algorithm>
+#include <signal.h>
+#include <unistd.h>
 #define INFINITY 100000
 
 using namespace std;
 unsigned expanded = 0;
 unsigned generated = 0;
 int tt_threshold = 32; // threshold to save entries in TT
+
+void sigalrm_handler(int sig){
+
+    exit(EXIT_SUCCESS);
+}
 
 
 // Transposition table (it is not necessary to implement TT)
@@ -46,10 +53,10 @@ bool test_your_might(state_t state, int depth, int color, int score, int conditi
     vector<int> valid_moves;
     bool color_b;
     if (depth == 0 || state.terminal()){
-        if (condition == GE){
-            return (color * state.value()) > score ? true : false;
+        if (condition == LE){
+            return (color * state.value()) < score ? true : false;
         } else {
-            return (color * state.value()) >= score ? true : false;
+            return (color * state.value()) <= score ? true : false;
         }
     }
 
@@ -59,49 +66,16 @@ bool test_your_might(state_t state, int depth, int color, int score, int conditi
         child = state.move(color_b, valid_moves.back());
         valid_moves.pop_back();
         if (test_your_might(child, depth - 1, -color, -score, -condition)){
-            return true;
+            return (condition == LE) ? false : true;
         }
     }    
 
-    return false;
+    return (condition == LE) ? true : false;
 }
 
 //int maxmin(state_t state, int depth, bool use_tt);
 //int minmax(state_t state, int depth, bool use_tt = false);
 //int maxmin(state_t state, int depth, bool use_tt = false);
-
-/*int scout(state_t state, int depth, int color, bool use_tt = false){
-    state_t child;
-    vector<int> valid_moves;
-    int score;
-    bool first_child, color_b;
-    if (depth == 0 || state.terminal()){
-        return state.value();
-    }
-
-    score = state.value(); //Esto podría ser un punto de error, pendiente en el futuro
-    first_child = true;
-    state.get_valid_moves(valid_moves, color);
-    while(!valid_moves.empty()){ 
-        child = state.move(color, valid_moves.back());
-        valid_moves.pop_back();
-        if (first_child){
-            score = scout(child, depth - 1, -color, use_tt);
-            first_child = false;
-        } else {
-            if ((color == 1) && test_your_might(child, depth - 1, -color, score, LESS)){
-                score = scout(child, depth - 1, -color, use_tt);
-            }
-
-            if ((color == -1)&& !test_your_might(child, depth - 1, -color, score, LEQ)){
-                score = scout(child, depth - 1, -color, use_tt);
-            }
-        }
-    }
-
-    return score;
-
-}*/
 
 int scout(state_t state, int depth, int color, bool use_tt = false){
     state_t child;
@@ -123,7 +97,7 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
             score = -scout(child, depth - 1, -color, use_tt);
             first_child = false;
         } else {
-            if (test_your_might(child, depth - 1, color, score, GE)){
+            if (test_your_might(child, depth - 1, -color, -score, LE)){
                 score = -scout(child, depth - 1, -color, use_tt);
             }
         }
@@ -133,7 +107,42 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
 
 }
 
-int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false);
+int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false){
+    state_t child;
+    vector<int> valid_moves;
+    int score, prueba;
+    bool first_child, color_b;
+
+    if (depth == 0 || state.terminal()){
+        return color * state.value();
+    }
+
+    first_child = true;
+    color_b = (color == 1) ? true : false;
+    state.get_valid_moves(valid_moves, color_b);
+    while(!valid_moves.empty()){ 
+        child = state.move(color_b, valid_moves.back());
+        valid_moves.pop_back();
+        if (first_child){
+            score = -negascout(child, depth - 1, -beta, -alpha, -color);
+            first_child = false;
+        } else {
+            score = -negascout(child, depth - 1, -alpha - 1, -alpha, -color);
+        }
+
+        if ((alpha < score) && (score < beta)){
+            score = -negascout(child, depth -1, -beta, -score, -color);
+        }
+
+        alpha = max(alpha, score);
+
+        if (alpha >= beta){
+            break;
+        }
+    }
+
+    return alpha;
+}
 
 
 int negamax(state_t state, int depth, int color, bool use_tt = false){
@@ -202,6 +211,7 @@ int main(int argc, const char **argv) {
     state_t pv[128];
     int npv = 0;
     for( int i = 0; PV[i] != -1; ++i ) ++npv;
+    signal(SIGALRM, &sigalrm_handler);
 
     int algorithm = 0;
     if( argc > 1 ) algorithm = atoi(argv[1]);
@@ -239,8 +249,9 @@ int main(int argc, const char **argv) {
 
     // Run algorithm along PV (bacwards)
     cout << "Moving along PV:" << endl;
-    for( int i = 0; i <= npv; ++i ) {
+    for( int i = 3; i <= 3; ++i ) {
         //cout << pv[i];
+        alarm(0);
         int value = 0;
         TTable[0].clear();
         TTable[1].clear();
@@ -255,10 +266,11 @@ int main(int argc, const char **argv) {
             } else if( algorithm == 2 ) {
                 value = negamax(pv[i], 0, -200, 200, color, use_tt);
             } else if( algorithm == 3 ) {
-                value = scout(pv[i], 0, color, use_tt);
-                cout << value << "\n";
+                alarm(900);
+                value = scout(pv[i], 70, color, use_tt);
             } else if( algorithm == 4 ) {
-                //value = negascout(pv[i], 0, -200, 200, color, use_tt);
+                alarm(900);
+                value = negascout(pv[i], 70, -200, 200, color, use_tt);
             }
         } catch( const bad_alloc &e ) {
             cout << "size TT[0]: size=" << TTable[0].size() << ", #buckets=" << TTable[0].bucket_count() << endl;
