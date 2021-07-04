@@ -61,7 +61,7 @@ bool test_your_might(state_t state, int depth, int color, int score, int conditi
     }
 
     color_b = (color == 1) ? true : false;
-    state.get_valid_moves(valid_moves, color_b);
+    state.get_valid_moves_b(valid_moves, color_b);
     while(!valid_moves.empty()){
         child = state.move(color_b, valid_moves.back());
         valid_moves.pop_back();
@@ -73,9 +73,73 @@ bool test_your_might(state_t state, int depth, int color, int score, int conditi
     return (condition == LE) ? true : false;
 }
 
+/*bool test_your_might(state_t state, int depth, int color, int score, int condition){
+    state_t child;
+    vector<int> valid_moves;
+    bool color_b;
+
+    if (depth == 0 || state.terminal()){
+        if (condition == LE){
+            return ((state.value()) > score) ? true : false;
+        } else {
+            return ((state.value()) >= score) ? true : false;
+        }
+    }
+
+    color_b = (color == 1) ? true : false;
+    state.get_valid_moves_b(valid_moves, color_b);
+    while(!valid_moves.empty()){
+        child = state.move(color_b, valid_moves.back());
+        valid_moves.pop_back();
+        if (color_b && test_your_might(child, depth -1, -color, score, condition)){
+            return true;
+        }
+
+        if (!color_b && !test_your_might(child, depth -1, -color, score, condition)){
+            return false;
+        }
+    }
+
+    return color_b ? false : true;
+}*/
+
 //int maxmin(state_t state, int depth, bool use_tt);
 //int minmax(state_t state, int depth, bool use_tt = false);
 //int maxmin(state_t state, int depth, bool use_tt = false);
+
+/*int scout(state_t state, int depth, int color, bool use_tt = false){
+    state_t child;
+    vector<int> valid_moves;
+    int score;
+    bool first_child, color_b;
+    if (depth == 0 || state.terminal()){
+        return state.value();
+    }
+
+    score = color * state.value(); //Esto podría ser un punto de error, pendiente en el futuro
+    first_child = true;
+    color_b = (color == 1) ? true : false;
+    state.get_valid_moves_b(valid_moves, color_b);
+    while(!valid_moves.empty()){ 
+        child = state.move(color_b, valid_moves.back());
+        valid_moves.pop_back();
+        if (first_child){
+            score = scout(child, depth - 1, -color, use_tt);
+            first_child = false;
+        } else {
+            if (color_b && test_your_might(child, depth - 1, -color, score, LE)){
+                score = scout(child, depth - 1, -color, use_tt);
+            } 
+
+            if (!color_b && !test_your_might(child, depth - 1, -color, score, LEQ)){
+                score = scout(child, depth - 1, -color, use_tt);
+            }
+        }
+    }
+
+    return score;
+
+}*/
 
 int scout(state_t state, int depth, int color, bool use_tt = false){
     state_t child;
@@ -103,7 +167,7 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
         }
     }
 
-    return score;
+    return color * score;
 
 }
 
@@ -119,7 +183,7 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
 
     first_child = true;
     color_b = (color == 1) ? true : false;
-    state.get_valid_moves(valid_moves, color_b);
+    state.get_valid_moves_b(valid_moves, color_b);
     while(!valid_moves.empty()){ 
         child = state.move(color_b, valid_moves.back());
         valid_moves.pop_back();
@@ -251,7 +315,7 @@ int main(int argc, const char **argv) {
 
     // Run algorithm along PV (bacwards)
     cout << "Moving along PV:" << endl;
-    for( int i = 3; i <= 3; ++i ) {
+    for( int i = 0; i <= npv; ++i ) {
         //cout << pv[i];
         alarm(0);
         int value = 0;
@@ -264,9 +328,9 @@ int main(int argc, const char **argv) {
 
         try {
             if( algorithm == 1 ) {
-                value = negamax(pv[i], 10000, color, use_tt);
+                value = negamax(pv[i], 70, color, use_tt);
             } else if( algorithm == 2 ) {
-                value = negamax(pv[i], 10000, -INFINITY, INFINITY, color, use_tt);
+                value = negamax(pv[i], 70, -INFINITY, INFINITY, color, use_tt);
             } else if( algorithm == 3 ) {
                 alarm(900);
                 value = scout(pv[i], 70, color, use_tt);
