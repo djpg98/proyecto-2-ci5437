@@ -209,9 +209,8 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
         }
         valid_moves.pop_back();
 
-        val = negamax(child, depth - 1, -beta, -alpha, -color);
-        score = max(score, val);
-        alpha = max(alpha, val);
+        score = max(score, -negamax(child, depth - 1, -beta, -alpha, -color));
+        alpha = max(alpha, score);
 
         if (alpha >= beta) break;
     }
