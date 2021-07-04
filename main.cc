@@ -128,10 +128,10 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
             first_child = false;
         } else {
             score = -negascout(child, depth - 1, -alpha - 1, -alpha, -color);
-        }
 
-        if ((alpha < score) && (score < beta)){
-            score = -negascout(child, depth -1, -beta, -score, -color);
+            if ((alpha < score) && (score < beta)){
+                score = -negascout(child, depth -1, -beta, -score, -color);
+            }
         }
 
         alpha = max(alpha, score);
