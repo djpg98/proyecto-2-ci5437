@@ -171,20 +171,20 @@ class state_t {
             }
         }
 
-        if (valid_moves.size() == 0) {
-            valid_moves = {DIM};
+        if (valid_moves.size() == 0){
+            valid_moves.push_back(DIM);
         }
     }
 
-    void get_valid_moves(std::vector<int> &valid_moves, bool color) {
-        for( int pos = 0; pos <= DIM; ++pos ) {
+    void get_valid_moves_b(std::vector<int> &valid_moves, bool color) {
+        for( int pos = 0; pos < DIM; ++pos ) {
             if( (color && is_black_move(pos)) || (!color && is_white_move(pos)) ) {
                 valid_moves.push_back(pos);
             }
         }
 
-        if (valid_moves.size() == 0) {
-            valid_moves = {DIM};
+        if (valid_moves.size() == 0){
+            valid_moves.push_back(DIM);
         }
     }
 
@@ -261,7 +261,11 @@ inline bool state_t::outflank(bool color, int pos) const {
         for( p = x + 1; (*p != -1) && !is_free(*p) && (color ^ is_black(*p)); ++p );
         if( (p > x + 1) && (*p != - 1) && !is_free(*p) ) return true;
     }
+<<<<<<< HEAD
+    if( x != dia1[pos - 4]) {
+=======
     if( x != dia1[pos - 4] ) {
+>>>>>>> 47f3f72c231af8de69c4d0dc560710a5f8a00026
         for( p = x - 1; (p >= dia1[pos - 4]) && !is_free(*p) && (color ^ is_black(*p)); --p );
         if( (p < x - 1) && (p >= dia1[pos - 4]) && !is_free(*p) ) return true; 
     }
@@ -273,7 +277,11 @@ inline bool state_t::outflank(bool color, int pos) const {
         for( p = x + 1; (*p != -1) && !is_free(*p) && (color ^ is_black(*p)); ++p );
         if( (p > x + 1) && (*p != - 1) && !is_free(*p) ) return true;
     }
+<<<<<<< HEAD
+    if( x != dia2[pos - 4]) {
+=======
     if( x != dia2[pos - 4] ) {
+>>>>>>> 47f3f72c231af8de69c4d0dc560710a5f8a00026
         for( p = x - 1; (p >= dia2[pos - 4]) && !is_free(*p) && (color ^ is_black(*p)); --p );
         if( (p < x - 1) && (p >= dia2[pos - 4]) && !is_free(*p) ) return true; 
     }
