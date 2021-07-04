@@ -151,6 +151,7 @@ int negamax(state_t state, int depth, int color, bool use_tt = false){
         return color * state.value();
     }
 
+    expanded += 1;
     int alpha = -INFINITY;
     vector<int> valid_moves;
     state.get_valid_moves(valid_moves, color);
@@ -158,7 +159,7 @@ int negamax(state_t state, int depth, int color, bool use_tt = false){
     state_t child;
     while (!valid_moves.empty()) {
 
-        if (color) {
+        if (color == 1) {
             child = state.black_move(valid_moves.back());
         }
         else {
@@ -180,6 +181,7 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
         return color * state.value();
     }
 
+    expanded += 1;
     int score = -INFINITY;
     vector<int> valid_moves;
     state.get_valid_moves(valid_moves, color);
@@ -188,7 +190,7 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
     int val;
     while (!valid_moves.empty()) {
 
-        if (color) {
+        if (color == 1) {
             child = state.black_move(valid_moves.back());
         }
         else {
@@ -262,9 +264,9 @@ int main(int argc, const char **argv) {
 
         try {
             if( algorithm == 1 ) {
-                value = negamax(pv[i], 0, color, use_tt);
+                value = negamax(pv[i], 10000, color, use_tt);
             } else if( algorithm == 2 ) {
-                value = negamax(pv[i], 0, -200, 200, color, use_tt);
+                value = negamax(pv[i], 10000, -INFINITY, INFINITY, color, use_tt);
             } else if( algorithm == 3 ) {
                 alarm(900);
                 value = scout(pv[i], 70, color, use_tt);
