@@ -112,11 +112,12 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
     vector<int> valid_moves;
     int score;
     bool first_child, color_b;
+
+    expanded += 1;
+
     if (depth == 0 || state.terminal()){
         return color * state.value();
     }
-
-    expanded += 1;
 
     score = state.value(); //Esto podría ser un punto de error, pendiente en el futuro
     first_child = true;
@@ -180,11 +181,11 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
     int score;
     bool first_child, color_b;
 
+    expanded += 1;
+
     if (depth == 0 || state.terminal()){
         return color * state.value();
     }
-
-    expanded += 1;
 
     first_child = true;
     color_b = (color == 1) ? true : false;
