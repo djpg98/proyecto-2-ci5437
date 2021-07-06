@@ -2,9 +2,8 @@
 // Universidad Simon Bolivar, 2012.
 // Author: Blai Bonet
 // Last Revision: 1/11/16
-// Modified by: Diego Peña, 15-11095
+// Modified by: Pietro Iaia, 15-10718, Diego Peña, 15-11095, 6/07/2021
 
-#define NEGAINFINITY -40
 #define GE 1
 #define GEQ -1 
 
@@ -117,10 +116,13 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
         return color * state.value();
     }
 
+    expanded += 1;
+
     score = state.value(); //Esto podría ser un punto de error, pendiente en el futuro
     first_child = true;
     color_b = (color == 1) ? true : false;
     state.get_valid_moves_b(valid_moves, color_b);
+    generated += valid_moves.size();
     while(!valid_moves.empty()){ 
         child = state.move(color_b, valid_moves.back());
         valid_moves.pop_back();
@@ -182,9 +184,12 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
         return color * state.value();
     }
 
+    expanded += 1;
+
     first_child = true;
     color_b = (color == 1) ? true : false;
     state.get_valid_moves_b(valid_moves, color_b);
+    generated += valid_moves.size();
     while(!valid_moves.empty()){ 
         child = state.move(color_b, valid_moves.back());
         valid_moves.pop_back();
@@ -346,8 +351,10 @@ int main(int argc, const char **argv) {
             } else if( algorithm == 2 ) {
                 value = negamax(pv[i], 70, -INFINITY, INFINITY, color, use_tt);
             } else if( algorithm == 3 ) {
+                generated = 1;
                 value = scout(pv[i], 70, color, use_tt);
             } else if( algorithm == 4 ) {
+                generated = 1;
                 value = negascout(pv[i], 70, -200, 200, color, use_tt);
             }
         } catch( const bad_alloc &e ) {
