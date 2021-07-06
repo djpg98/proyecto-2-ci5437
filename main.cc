@@ -175,7 +175,7 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false){
     state_t child;
     vector<int> valid_moves;
-    int score, prueba;
+    int score;
     bool first_child, color_b;
 
     if (depth == 0 || state.terminal()){
@@ -262,7 +262,6 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
     generated += valid_moves.size();
 
     state_t child;
-    int val;
     while (!valid_moves.empty()) {
 
         if (color == 1) {
@@ -295,7 +294,7 @@ int main(int argc, const char **argv) {
 
     // Extract principal variation of the game
     state_t state;
-    cout << "Extracting principal variation (PV) with " << npv << " plays ... " << flush;
+    // cout << "Extracting principal variation (PV) with " << npv << " plays ... " << flush;
     for( int i = 0; PV[i] != -1; ++i ) {
         bool player = i % 2 == 0; // black moves first!
         int pos = PV[i];
@@ -303,7 +302,8 @@ int main(int argc, const char **argv) {
         state = state.move(player, pos);
     }
     pv[0] = state;
-    cout << "done!" << endl;
+    // cout << "done!" << endl;
+    cout << "npv, moves first, value, expanded nodes, generated nodes, seconds, generated/seconds\n";
 
 #if 0
     // print principal variation
@@ -312,7 +312,7 @@ int main(int argc, const char **argv) {
 #endif
 
     // Print name of algorithm
-    cout << "Algorithm: ";
+    /* cout << "Algorithm: ";
     if( algorithm == 1 )
         cout << "Negamax (minmax version)";
     else if( algorithm == 2 )
@@ -322,9 +322,10 @@ int main(int argc, const char **argv) {
     else if( algorithm == 4 )
         cout << "Negascout";
     cout << (use_tt ? " w/ transposition table" : "") << endl;
+    */
 
     // Run algorithm along PV (bacwards)
-    cout << "Moving along PV:" << endl;
+    // cout << "Moving along PV:" << endl;
     for( int i = 0; i <= npv; ++i ) {
         //cout << pv[i];
         alarm(0);
@@ -338,15 +339,15 @@ int main(int argc, const char **argv) {
         int color = i % 2 == 1 ? 1 : -1;
 
         try {
+            // Abort at 30 min of trying to find solution on a given PV
+            alarm(30 * 60);
             if( algorithm == 1 ) {
                 value = negamax(pv[i], 70, color, use_tt);
             } else if( algorithm == 2 ) {
                 value = negamax(pv[i], 70, -INFINITY, INFINITY, color, use_tt);
             } else if( algorithm == 3 ) {
-                alarm(900);
                 value = scout(pv[i], 70, color, use_tt);
             } else if( algorithm == 4 ) {
-                alarm(900);
                 value = negascout(pv[i], 70, -200, 200, color, use_tt);
             }
         } catch( const bad_alloc &e ) {
@@ -357,6 +358,15 @@ int main(int argc, const char **argv) {
 
         float elapsed_time = Utils::read_time_in_seconds() - start_time;
 
+        cout << npv + 1 - i << ", " 
+             << (color == 1 ? "Black" : "White") << ", " 
+             << color * value << ", " 
+             << expanded << ", " 
+             << generated << ","
+             << elapsed_time << ", "
+             << generated/elapsed_time << "\n";
+
+        /*
         cout << npv + 1 - i << ". " << (color == 1 ? "Black" : "White") << " moves: "
              << "value=" << color * value
              << ", #expanded=" << expanded
@@ -364,6 +374,7 @@ int main(int argc, const char **argv) {
              << ", seconds=" << elapsed_time
              << ", #generated/second=" << generated/elapsed_time
              << endl;
+        */
     }
 
     return 0;
