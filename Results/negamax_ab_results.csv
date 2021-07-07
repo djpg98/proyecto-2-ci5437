@@ -1,5 +1,5 @@
 npv, moves first, value, expanded nodes, generated nodes, seconds, generated/seconds
-34, White, -4, 0, 0,0, -
+34, White, -4, 0, 1,0, inf
 33, Black, -4, 1, 2,0, inf
 32, White, -4, 3, 5,0, inf
 31, Black, -4, 4, 6,0, inf
