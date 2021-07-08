@@ -1,8 +1,8 @@
 library(ggplot2)
-#setwd("./Results")
+setwd("./Results")
 NM <- read.csv("./negamax_results.csv", header=TRUE)
 NMAB <- read.csv("./negamax_ab_results.csv", header=TRUE)
-SCOUT <- read.csv("./scout_results_1.csv", header=TRUE)
+SCOUT <- read.csv("./scout_test_results_1.csv", header=TRUE)
 NSCOUT <- read.csv("./negascout_results_1.csv", header=TRUE)
 
 
@@ -46,7 +46,7 @@ avgdf20 <- data.frame(Algorithm = c("Negamax", "Negamax (w\ alpha-beta)", "Scout
                     Seconds=seconds,
                     Rate=rates
 )
-write.csv(avgdf, "./AvgTable20.csv", row.names = TRUE)
+write.csv(avgdf20, "./AvgTable20.csv", row.names = TRUE)
 
 #AHORA SOLO LOS PRIMEROS 17
 NMAB17 <- head(NMAB, 17)
@@ -70,23 +70,23 @@ avgdf17 <- data.frame(Algorithm = c("Negamax", "Negamax (w\ alpha-beta)", "Scout
                       Seconds=seconds,
                       Rate=rates
 )
-write.csv(avgdf, "./AvgTable17.csv", row.names = TRUE)
+write.csv(avgdf17, "./AvgTable17.csv", row.names = TRUE)
 
 #PLOTS GENERAL
-ggplot() + geom_line(data=NM, aes(x=npv, y=expanded.nodes, color="NM")) + geom_line(data=NMAB, aes(x=npv, y=expanded.nodes, color="NMAB")) + geom_line(data=SCOUT, aes(x=npv, y=expanded.nodes, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=expanded.nodes, color="NSCOUT"))
-ggplot() + geom_line(data=NM, aes(x=npv, y=generated.nodes, color="NM")) + geom_line(data=NMAB, aes(x=npv, y=generated.nodes, color="NMAB")) + geom_line(data=SCOUT, aes(x=npv, y=generated.nodes, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=generated.nodes, color="NSCOUT"))
-ggplot() + geom_line(data=NM, aes(x=npv, y=seconds, color="NM")) + geom_line(data=NMAB, aes(x=npv, y=seconds, color="NMAB")) + geom_line(data=SCOUT, aes(x=npv, y=seconds, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=seconds, color="NSCOUT"))
-ggplot() + geom_line(data=NM, aes(x=npv, y=generated.seconds, color="NM")) + geom_line(data=NMAB, aes(x=npv, y=generated.seconds, color="NMAB")) + geom_line(data=SCOUT, aes(x=npv, y=generated.seconds, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=generated.seconds, color="NSCOUT"))
+ggplot() + geom_line(data=NM, aes(x=npv, y=expanded.nodes, color="NM")) + geom_line(data=NMAB, aes(x=npv, y=expanded.nodes, color="NMAB")) + geom_line(data=SCOUT, aes(x=npv, y=expanded.nodes, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=expanded.nodes, color="NSCOUT")) + labs(title="Nodos expandidos vs. caso", x="Caso", y="Nodos expandidos")
+ggplot() + geom_line(data=NM, aes(x=npv, y=generated.nodes, color="NM")) + geom_line(data=NMAB, aes(x=npv, y=generated.nodes, color="NMAB")) + geom_line(data=SCOUT, aes(x=npv, y=generated.nodes, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=generated.nodes, color="NSCOUT")) + labs(title="Nodos generados vs. caso", x="Caso", y="Nodos generados")
+ggplot() + geom_line(data=NM, aes(x=npv, y=seconds, color="NM")) + geom_line(data=NMAB, aes(x=npv, y=seconds, color="NMAB")) + geom_line(data=SCOUT, aes(x=npv, y=seconds, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=seconds, color="NSCOUT")) + labs(title="Tiempo vs. caso", x="Caso", y="Tiempo")
+ggplot() + geom_line(data=NM, aes(x=npv, y=generated.seconds, color="NM")) + geom_line(data=NMAB, aes(x=npv, y=generated.seconds, color="NMAB")) + geom_line(data=SCOUT, aes(x=npv, y=generated.seconds, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=generated.seconds, color="NSCOUT")) + labs(title="Generados/seg vs. caso", x="Caso", y="Nodos generados/seg")
 
 #PLOTS 20
-ggplot() + geom_line(data=NMAB, aes(x=npv, y=expanded.nodes, color="NMAB")) + geom_line(data=SCOUT20, aes(x=npv, y=expanded.nodes, color="SCOUT")) + geom_line(data=NSCOUT20, aes(x=npv, y=expanded.nodes, color="NSCOUT"))
-ggplot() + geom_line(data=NMAB, aes(x=npv, y=generated.nodes, color="NMAB")) + geom_line(data=SCOUT20, aes(x=npv, y=generated.nodes, color="SCOUT")) + geom_line(data=NSCOUT20, aes(x=npv, y=generated.nodes, color="NSCOUT"))
-ggplot() + geom_line(data=NMAB, aes(x=npv, y=seconds, color="NMAB")) + geom_line(data=SCOUT20, aes(x=npv, y=seconds, color="SCOUT")) + geom_line(data=NSCOUT20, aes(x=npv, y=seconds, color="NSCOUT"))
-ggplot() + geom_line(data=NMAB, aes(x=npv, y=generated.seconds, color="NMAB")) + geom_line(data=SCOUT20, aes(x=npv, y=generated.seconds, color="SCOUT")) + geom_line(data=NSCOUT20, aes(x=npv, y=generated.seconds, color="NSCOUT"))
+ggplot() + geom_line(data=NMAB, aes(x=npv, y=expanded.nodes, color="NMAB")) + geom_line(data=SCOUT20, aes(x=npv, y=expanded.nodes, color="SCOUT")) + geom_line(data=NSCOUT20, aes(x=npv, y=expanded.nodes, color="NSCOUT")) + labs(title="Nodos expandidos vs. caso", x="Caso", y="Nodos expandidos")
+ggplot() + geom_line(data=NMAB, aes(x=npv, y=generated.nodes, color="NMAB")) + geom_line(data=SCOUT20, aes(x=npv, y=generated.nodes, color="SCOUT")) + geom_line(data=NSCOUT20, aes(x=npv, y=generated.nodes, color="NSCOUT")) + labs(title="Nodos generados vs. caso", x="Caso", y="Nodos generados")
+ggplot() + geom_line(data=NMAB, aes(x=npv, y=seconds, color="NMAB")) + geom_line(data=SCOUT20, aes(x=npv, y=seconds, color="SCOUT")) + geom_line(data=NSCOUT20, aes(x=npv, y=seconds, color="NSCOUT")) + labs(title="Tiempo vs. caso", x="Caso", y="Tiempo")
+ggplot() + geom_line(data=NMAB, aes(x=npv, y=generated.seconds, color="NMAB")) + geom_line(data=SCOUT20, aes(x=npv, y=generated.seconds, color="SCOUT")) + geom_line(data=NSCOUT20, aes(x=npv, y=generated.seconds, color="NSCOUT")) + labs(title="Generados/seg vs. caso", x="Caso", y="Nodos generados/seg")
 
 #SCOUT VS NEGASCOUT
-ggplot() + geom_line(data=SCOUT, aes(x=npv, y=expanded.nodes, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=expanded.nodes, color="NSCOUT"))
-ggplot() + geom_line(data=SCOUT, aes(x=npv, y=generated.nodes, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=generated.nodes, color="NSCOUT"))
-ggplot() + geom_line(data=SCOUT, aes(x=npv, y=seconds, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=seconds, color="NSCOUT"))
-ggplot() + geom_line(data=SCOUT, aes(x=npv, y=generated.seconds, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=generated.seconds, color="NSCOUT"))
+ggplot() + geom_line(data=SCOUT, aes(x=npv, y=expanded.nodes, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=expanded.nodes, color="NSCOUT")) + labs(title="Nodos expandidos vs. caso", x="Caso", y="Nodos expandidos") 
+ggplot() + geom_line(data=SCOUT, aes(x=npv, y=generated.nodes, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=generated.nodes, color="NSCOUT")) + labs(title="Nodos generados vs. caso", x="Caso", y="Nodos generados")
+ggplot() + geom_line(data=SCOUT, aes(x=npv, y=seconds, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=seconds, color="NSCOUT")) + labs(title="Tiempo vs. caso", x="Caso", y="Tiempo")
+ggplot() + geom_line(data=SCOUT, aes(x=npv, y=generated.seconds, color="SCOUT")) + geom_line(data=NSCOUT, aes(x=npv, y=generated.seconds, color="NSCOUT")) + labs(title="Generados/seg vs. caso", x="Caso", y="Nodos generados/seg")
 
