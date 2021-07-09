@@ -48,7 +48,7 @@ class hash_table_t : public unordered_map<state_t, stored_info_t, hash_function_
 
 hash_table_t TTable[2];
 
-/*bool test_your_might(state_t state, int depth, int color, int score, int condition){
+/*bool test(state_t state, int depth, int color, int score, int condition){
     state_t child;
     vector<int> valid_moves;
     bool color_b;
@@ -65,7 +65,7 @@ hash_table_t TTable[2];
     while(!valid_moves.empty()){
         child = state.move(color_b, valid_moves.back());
         valid_moves.pop_back();
-        if (test_your_might(child, depth - 1, -color, -score, -condition)){
+        if (test(child, depth - 1, -color, -score, -condition)){
             return (condition == LE) ? false : true;
         }
     }    
@@ -73,7 +73,7 @@ hash_table_t TTable[2];
     return (condition == LE) ? true : false;
 }*/
 
-bool test_your_might(state_t state, int depth, int color, int score, int condition){
+bool test(state_t state, int depth, int color, int score, int condition){
     state_t child;
     vector<int> valid_moves;
     bool color_b;
@@ -94,11 +94,11 @@ bool test_your_might(state_t state, int depth, int color, int score, int conditi
     while(!valid_moves.empty()){
         child = state.move(color_b, valid_moves.back());
         valid_moves.pop_back();
-        if (color_b && test_your_might(child, depth -1, -color, score, condition)){
+        if (color_b && test(child, depth -1, -color, score, condition)){
             return true;
         }
 
-        if (!color_b && !test_your_might(child, depth -1, -color, score, condition)){
+        if (!color_b && !test(child, depth -1, -color, score, condition)){
             return false;
         }
     }
@@ -134,11 +134,11 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
             score = -scout(child, depth - 1, -color, use_tt);
             first_child = false;
         } else {
-            if (color_b && test_your_might(child, depth - 1, -color, score, GE)){
+            if (color_b && test(child, depth - 1, -color, score, GE)){
                 score = -scout(child, depth - 1, -color, use_tt);
             } 
 
-            if (!color_b && !test_your_might(child, depth - 1, -color, color * score, GEQ)){
+            if (!color_b && !test(child, depth - 1, -color, color * score, GEQ)){
                 score = -scout(child, depth - 1, -color, use_tt);
             }
         }
@@ -168,7 +168,7 @@ int scout(state_t state, int depth, int color, bool use_tt = false){
             score = -scout(child, depth - 1, -color, use_tt);
             first_child = false;
         } else {
-            if (test_your_might(child, depth - 1, -color, -score, LE)){
+            if (test(child, depth - 1, -color, -score, LE)){
                 score = -scout(child, depth - 1, -color, use_tt);
             }
         }
